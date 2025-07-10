@@ -161,17 +161,22 @@ Complex filter combinations in property search
 
 ### 📊 Dashboard, Property Post & Add Rooms
 <img src="assets/Picture5.png" width="700"/>
-### 🏡 Property Details View
+
+###  🏡 Property Details View
 <img src="assets/Picture6.png" width="700"/>
+
 ### 📝 My Uploaded Properties
 <img src="assets/Picture7.png" width="700"/>
+
 ### 🛠️ Edit Property
 <img src="assets/Picture8.png" width="700"/>
+
 ### ❤️ Property List & Favorites
 <img src="assets/Picture9.png" width="400"/> <img src="assets/Picture10.png" width="400"/>
 
 ### 🔍 Property Search with Filters
 <img src="assets/Picture11.png" width="700"/>
+
 ### 🧑‍💼 Admin Panel, Reports & User Control
 <img src="assets/Picture14.png" width="400"/> <img src="assets/Picture15.png" width="400"/>
 
@@ -180,6 +185,7 @@ Complex filter combinations in property search
 
 ### 📈 User Management (Admin)
 <img src="assets/Picture18.png" width="700"/>
+
 ### 🔒 Privacy Policy Page
 <img src="assets/Picture21.png" width="700"/>
 
