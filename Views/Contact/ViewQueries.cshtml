@@ -1,0 +1,128 @@
+﻿@model List<NestFinder.Models.Contact>
+
+<div class="container mt-4">
+    <div class="card shadow-lg border-0 rounded-lg p-4">
+        <h2 class="text-center text-primary">
+            <i class="fa fa-comments"></i> View Queries
+        </h2>
+
+        <div class="table-responsive">
+            <table class="table table-hover table-bordered mt-3">
+                <thead class="table-dark">
+                    <tr>
+                        <th><i class="fa fa-user"></i> Name</th>
+                        <th><i class="fa fa-envelope"></i> Email</th>
+                        <th><i class="fa fa-phone"></i> Phone</th>
+                        <th><i class="fa fa-comment"></i> Message</th>
+                        <th><i class="fa fa-reply"></i> Reply</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var query in Model)
+                    {
+                        <tr>
+                            <td>@query.Name</td>
+                            <td>@query.Email</td>
+                            <td>@query.PhoneNumber</td>
+                            <td>@query.Message</td>
+                            <td class="text-center">
+                                <button class="btn btn-primary btn-sm reply-btn" data-bs-toggle="modal" data-bs-target="#emailModal-@query.Id">
+                                    <i class="fa fa-paper-plane"></i> Reply
+                                </button>
+                                <!-- Email Modal -->
+                                <div class="modal fade" id="emailModal-@query.Id" tabindex="-1" aria-labelledby="emailModalLabel-@query.Id" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content">
+                                            <div class="modal-header bg-primary text-white">
+                                                <h5 class="modal-title"><i class="fa fa-envelope"></i> Reply to @query.Email</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <form onsubmit="sendEmail(event, '@query.Email', '@query.Id')">
+                                                    <div class="mb-3">
+                                                        <label class="form-label"><i class="fa fa-tag"></i> Subject</label>
+                                                        <input type="text" id="subject-@query.Id" class="form-control" placeholder="Enter subject" required />
+                                                    </div>
+
+                                                    <div class="mb-3">
+                                                        <label class="form-label"><i class="fa fa-comment-dots"></i> Message</label>
+                                                        <textarea id="message-@query.Id" class="form-control" rows="4" placeholder="Enter message" required></textarea>
+                                                    </div>
+
+                                                    <div class="d-grid">
+                                                        <button type="submit" class="btn btn-success">
+                                                            <i class="fa fa-paper-plane"></i> Send via Gmail
+                                                        </button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- End Modal -->
+                                <!-- JavaScript for Redirecting to Gmail -->
+                                <script>
+                                    function sendEmail(event, recipientEmail, queryId) {
+                                        event.preventDefault(); // Prevent form submission
+
+                                        // Get Subject and Message
+                                        let subject = document.getElementById(`subject-${queryId}`).value;
+                                        let message = document.getElementById(`message-${queryId}`).value;
+
+                                        // Encode the subject and message for URL compatibility
+                                        let mailtoLink = `https://mail.google.com/mail/?view=cm&fs=1&to=${recipientEmail}&su=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
+
+                                        // Open Gmail Compose in a new tab
+                                        window.open(mailtoLink, '_blank');
+                                    }
+                                </script>
+
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- ✅ Include Bootstrap 5 & jQuery -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+<!-- ✅ Extra JavaScript for Smooth UI -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        $(".reply-btn").click(function () {
+            let modalId = $(this).attr("data-bs-target");
+            $(modalId).modal("show");
+        });
+    });
+</script>
+
+<!-- ✅ Custom Styling for Better UI -->
+<style>
+    .table th, .table td {
+        vertical-align: middle;
+        text-align: center;
+    }
+
+    .btn-sm {
+        font-size: 0.9rem;
+        padding: 5px 10px;
+    }
+
+    .modal-content {
+        border-radius: 10px;
+    }
+
+    
+
+    .card {
+        border-radius: 12px;
+        transition: 0.3s;
+    }
+
+</style>

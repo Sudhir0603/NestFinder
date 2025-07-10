@@ -1,0 +1,42 @@
+﻿@model List<NestFinder.Models.Property>
+
+@{
+    ViewBag.Title = "Search Results";
+}
+
+<div class="container my-5">
+    <h2 class="text-center">Search Results</h2>
+
+    @if (Model.Count == 0)
+    {
+        <p class="text-center text-danger">No properties found matching your criteria.</p>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var property in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card">
+                        @if (!string.IsNullOrEmpty(property.ImageUrls))
+                        {
+                            <img src="@property.ImageUrls.Split(';')[0]" class="card-img-top" alt="Property Image">
+                        }
+                        else
+                        {
+                            <img src="https://via.placeholder.com/300" class="card-img-top" alt="No Image Available">
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">@property.Title</h5>
+                            <p class="card-text">@property.Description</p>
+                            <p><strong>Rent:</strong> ₹@property.Rent</p>
+                            <p><strong>Locality:</strong> @property.Address, @property.City</p>
+                            <p><strong>Furnishing:</strong> @property.FurnishingStatus</p>
+                            <a href="@property.LocationLink" target="_blank" class="btn btn-primary">View Location</a>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

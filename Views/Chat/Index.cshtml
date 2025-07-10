@@ -1,0 +1,113 @@
+﻿@{
+    ViewBag.Title = "Chat with " + ViewBag.Receiver.FullName;
+}
+
+<h2 class="text-center">Chat with @ViewBag.Receiver.FullName</h2>
+
+<!-- ✅ Hidden Fields for User IDs -->
+<input type="hidden" id="currentUserId" value="@ViewBag.CurrentUserId" />
+<input type="hidden" id="receiverId" value="@ViewBag.Receiver.Id" />
+
+<div class="chat-container">
+    <!-- Chat Messages -->
+    <div id="chatBox" class="chat-box"></div>
+
+    <!-- Message Input -->
+    <div class="chat-input">
+        <input type="text" id="messageInput" class="form-control" placeholder="Type a message...">
+        <button class="btn btn-primary" onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<script>
+    var receiverId = document.getElementById("receiverId").value;
+    var currentUserId = document.getElementById("currentUserId").value;
+
+    function loadMessages() {
+        fetch(`/Chat/GetMessages?receiverId=${receiverId}`)
+            .then(response => response.json())
+            .then(messages => {
+                var chatBox = document.getElementById("chatBox");
+                chatBox.innerHTML = "";
+
+                messages.forEach(msg => {
+                    var isSender = msg.SenderId === currentUserId;
+                    var messageClass = isSender ? "sender-message" : "receiver-message";
+
+                    chatBox.innerHTML += `
+                        <div class="message ${messageClass}">
+                            <p>${msg.Content}</p>
+                            <small>${new Date(msg.Timestamp).toLocaleTimeString()}</small>
+                        </div>`;
+                });
+
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
+    }
+
+    function sendMessage() {
+        var messageInput = document.getElementById("messageInput");
+        var content = messageInput.value.trim();
+
+        if (content === "") return;
+
+        fetch('/Chat/SendMessage', {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ receiverId: receiverId, content: content })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    messageInput.value = "";
+                    loadMessages();
+                } else {
+                    alert(data.message);
+                }
+            });
+    }
+
+    setInterval(loadMessages, 3000);
+</script>
+
+<!-- ✅ Styling for Chat UI -->
+<style>
+    .chat-container {
+        max-width: 600px;
+        margin: auto;
+        border-radius: 10px;
+        background: #f8f9fa;
+        padding: 15px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .chat-box {
+        height: 400px;
+        overflow-y: auto;
+        padding: 10px;
+        background: #fff;
+        border-radius: 5px;
+        margin-bottom: 10px;
+    }
+
+    .message {
+        padding: 10px;
+        border-radius: 10px;
+        max-width: 75%;
+        margin: 5px;
+    }
+
+    .sender-message {
+        background-color: #007bff;
+        color: white;
+        text-align: right;
+        border-radius: 15px 15px 0 15px;
+    }
+
+    .receiver-message {
+        background-color: #f1f1f1;
+        color: black;
+        text-align: left;
+        border-radius: 15px 15px 15px 0;
+    }
+</style>

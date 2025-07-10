@@ -1,0 +1,274 @@
+﻿@model IEnumerable<NestFinder.Models.Property>
+
+<h2 class="mb-4 text-primary">Pending Property Approvals</h2>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-hover shadow-sm">
+        <thead class="table-dark">
+            <tr>
+                <th>Title</th>
+                <th>Images</th>
+                <th>Owner</th>
+                <th>Address</th>
+                <th>City</th>
+                <th>Price</th>
+                <th>Room Type</th>
+                <th>Sharing Info</th>
+                <th>Furnishing</th>
+                <th>Contact</th>
+                <th>Gender</th>
+                <th>Amenities</th>
+                <th>Location</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var property in Model)
+            {
+                <tr>
+                    <td>@property.Title</td>
+
+                    <!-- Property Images (Bootstrap Carousel) -->
+                    <td>
+                        @if (!string.IsNullOrEmpty(property.ImageUrls))
+                        {
+                            var images = property.ImageUrls.Split(';');
+                            var carouselId = "carousel" + property.Id;
+
+                            <div id="@carouselId" class="carousel slide" data-bs-ride="carousel">
+                                <div class="carousel-inner">
+                                    @for (int i = 0; i < images.Length; i++)
+                                    {
+                                        <div class="carousel-item @(i == 0 ? "active" : "")">
+                                            <img src="@images[i]" class="d-block w-100 rounded" style="height: 100px; object-fit: cover;">
+                                        </div>
+                                    }
+                                </div>
+                                <button class="carousel-control-prev" type="button" data-bs-target="#@carouselId" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon"></span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#@carouselId" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon"></span>
+                                </button>
+                            </div>
+                        }
+                        else
+                        {
+                            <span class="text-muted">No Images</span>
+                        }
+                    </td>
+
+                    <!-- Owner Name -->
+                    <td>
+                        @if (property.User != null)
+                        {
+                            <span class="text-dark fw-bold">@property.User.FullName</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">Unknown</span>
+                        }
+                    </td>
+
+                    <td>@property.Address</td>
+                    <td>@property.City</td>
+                    <td>₹@property.Price</td>
+                    <td>@property.RoomType</td>
+                    <td>@property.SharingInfo</td>
+                    <td>@property.FurnishingStatus</td>
+                    <td>@property.Contact</td>
+
+                    <td>
+                        @if (property.Gender == "Boys")
+                        {
+                            <span class="badge bg-primary"><i class="bi bi-person-fill"></i> Boys</span>
+                        }
+                        else if (property.Gender == "Girls")
+                        {
+                            <span class="badge bg-danger"><i class="bi bi-person-hearts"></i> Girls</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-success"><i class="bi bi-people-fill"></i> Both</span>
+                        }
+                    </td>
+
+                    <td>
+                        @if (!string.IsNullOrEmpty(property.Amenities))
+                        {
+                            <span class="badge bg-secondary">@property.Amenities.Replace(";", ", ")</span>
+                        }
+                        else
+                        {
+                            <span class="text-muted">No Amenities</span>
+                        }
+                    </td>
+
+                    <td>
+                        @if (!string.IsNullOrEmpty(property.LocationLink))
+                        {
+                            <a href="@property.LocationLink" target="_blank" class="btn btn-sm btn-outline-info">
+                                <i class="bi bi-geo-alt"></i> View Map
+                            </a>
+                        }
+                        else
+                        {
+                            <span class="text-muted">No Location</span>
+                        }
+                    </td>
+
+                    <td class="text-center">
+                        <div class="btn-group btn-group-sm" role="group">
+                            <button class="btn btn-outline-warning" onclick="openDetailsModal('@Url.Action("ViewDetails", "Admin", new { id = property.Id })')">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                            <button class="btn btn-outline-success" onclick="openConfirmModal('@Url.Action("Approve", "Admin", new { id = property.Id })', 'approve')">
+                                <i class="bi bi-check-circle"></i>
+                            </button>
+                            <button class="btn btn-outline-danger" onclick="openConfirmModal('@Url.Action("Reject", "Admin", new { id = property.Id })', 'reject')">
+                                <i class="bi bi-x-circle"></i>
+                            </button>
+                        </div>
+                    </td>
+
+
+
+
+                </tr>
+            }
+        </tbody>
+    </table>
+    <!-- Approval & Rejection Confirmation Modal -->
+    <div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmModalLabel">Confirm Action</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p id="confirmMessage"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <a id="confirmActionBtn" class="btn"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap CSS & JavaScript -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Custom Styles -->
+<style>
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    table {
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    .table thead th {
+        text-align: center;
+    }
+
+    .table tbody td {
+        vertical-align: middle;
+    }
+
+    .carousel {
+        width: 150px;
+        height: 100px;
+        overflow: hidden;
+    }
+
+        .carousel img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+    .btn-sm {
+        font-size: 14px;
+        padding: 6px 10px;
+    }
+    .btn-group-sm .btn {
+        padding: 6px;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: 0.3s ease-in-out;
+    }
+
+        .btn-group-sm .btn i {
+            font-size: 16px;
+        }
+
+    .btn-outline-warning:hover {
+        background-color: #ffc107;
+        color: white;
+    }
+
+    .btn-outline-success:hover {
+        background-color: #28a745;
+        color: white;
+    }
+
+    .btn-outline-danger:hover {
+        background-color: #dc3545;
+        color: white;
+    }
+    .btn-group-sm .btn {
+        padding: 6px;
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: 0.3s ease-in-out;
+    }
+
+    .modal-content {
+        border-radius: 10px;
+    }
+
+    .modal-footer .btn {
+        width: 120px;
+    }
+
+
+</style>
+<script>
+    function openConfirmModal(actionUrl, actionType) {
+        const modal = new bootstrap.Modal(document.getElementById('confirmModal'));
+        const message = document.getElementById('confirmMessage');
+        const actionBtn = document.getElementById('confirmActionBtn');
+
+        if (actionType === 'approve') {
+            message.innerHTML = "Are you sure you want to <b>approve</b> this property?";
+            actionBtn.className = "btn btn-success";
+            actionBtn.innerHTML = "Yes, Approve";
+        } else {
+            message.innerHTML = "Are you sure you want to <b>reject</b> this property?";
+            actionBtn.className = "btn btn-danger";
+            actionBtn.innerHTML = "Yes, Reject";
+        }
+
+        actionBtn.href = actionUrl; // Redirects when confirmed
+        modal.show();
+    }
+
+    function openDetailsModal(url) {
+        window.location.href = url;
+    }
+
+</script>

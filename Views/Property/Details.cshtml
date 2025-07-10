@@ -1,0 +1,675 @@
+﻿@model NestFinder.Models.Property
+
+@{
+    ViewBag.Title = "Property Details";
+}
+
+<!-- Google Fonts & Font Awesome -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f8f9fa;
+    }
+
+    .property-card {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        background: #fff;
+    }
+
+    .property-header {
+        font-weight: 600;
+        color: #333;
+    }
+
+    .fab {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: #007bff;
+        color: white;
+        border-radius: 50%;
+        width: 56px;
+        height: 56px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        transition: background 0.3s;
+    }
+
+        .fab:hover {
+            background: #0056b3;
+        }
+</style>
+
+<div class="container mt-4">
+    <div class="card property-card p-3">
+        <!-- Header -->
+        <h2 class="text-center mb-4 text-primary"><i class="fa-solid fa-house"></i> @Model.Title</h2>
+
+        <div class="row">
+            <!-- Left: Image Carousel -->
+            <div class="col-md-6">
+                <div id="carousel-@Model.Id" class="carousel slide rounded shadow-sm" data-bs-ride="carousel">
+                    <div class="carousel-inner">
+                        @if (!string.IsNullOrEmpty(Model.ImageUrls))
+                        {
+                            var imageArray = Model.ImageUrls.Split(';');
+                            for (int i = 0; i < imageArray.Length; i++)
+                            {
+                                <div class="carousel-item @(i == 0 ? "active" : "")">
+                                    <img src="@imageArray[i]" class="d-block w-100 rounded" style="height: 400px; object-fit: cover;"
+                                         onclick="showFullImage('@imageArray[i]')" data-bs-toggle="modal" data-bs-target="#imageModal">
+                                </div>
+                            }
+                        }
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carousel-@Model.Id" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon"></span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carousel-@Model.Id" data-bs-slide="next">
+                        <span class="carousel-control-next-icon"></span>
+                    </button>
+                </div>
+            </div>
+           
+
+            <!-- Right: Property Details -->
+            <div class="col-md-6">
+                <div class="p-3">
+
+                    <h4 class="property-header"><i class="fa-solid fa-info-circle text-primary"></i> Property Details</h4>
+                    <p><i class="fa-solid fa-file-alt text-primary"></i> <strong>Description:</strong> @Model.Description</p>
+                    <p><i class="fa-solid fa-map-marker-alt text-danger"></i> <strong>Location:</strong> @Model.City, @Model.State</p>
+                    <p><i class="fa-solid fa-tag text-success"></i> <strong>Price:</strong> ₹@String.Format("{0:N0}", Model.Price)</p>
+                    <p><i class="fa-solid fa-bed text-info"></i> <strong>Room Type:</strong> @Model.RoomType</p>
+
+                    <p><strong>Gender Allowed:</strong> @Model.Gender</p>
+
+                    <!-- Amenities Section -->
+                    <h5 class="mt-3 text-success">
+                        <i class="fa-solid fa-check-circle"></i> Amenities
+                    </h5>
+
+                    @if (!string.IsNullOrEmpty(Model.Amenities))
+                    {
+                        <div class="amenities-container">
+                            <div class="amenities-list">
+                                @foreach (var amenity in Model.Amenities.Split(';'))
+                                {
+                                    <div class="amenity-item">
+                                        <i class="fa-solid fa-circle-check text-success"></i> @amenity
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No amenities listed.</p>
+                    }
+
+                    <!-- Custom Styling -->
+                    <style>
+                        .amenities-container {
+                            overflow-x: auto;
+                            white-space: nowrap;
+                            padding-bottom: 10px;
+                        }
+
+                        .amenities-list {
+                            display: flex;
+                            gap: 8px;
+                            padding: 5px 0;
+                        }
+
+                        .amenity-item {
+                            background: #f9f9f9;
+                            border-radius: 6px;
+                            padding: 6px 12px;
+                            font-size: 0.9rem;
+                            color: #333;
+                            display: flex;
+                            align-items: center;
+                            gap: 5px;
+                            min-width: 140px;
+                            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                            transition: background 0.3s ease-in-out, transform 0.2s;
+                        }
+
+                            .amenity-item:hover {
+                                background: #e9f5e9;
+                                transform: translateY(-2px);
+                            }
+
+                            .amenity-item i {
+                                font-size: 1rem;
+                                color: #28a745;
+                            }
+                    </style>
+
+                    <h5 class="text-success mt-4"><i class="fa-solid fa-bed"></i> Rooms Offering</h5>
+
+                    <div class="room-container">
+                        <div class="room-scroll">
+                            @foreach (var room in Model.Rooms)
+                            {
+                                <div class="room-card">
+                                    <h6 class="room-title">
+                                        <i class="fa-solid fa-door-open text-primary"></i> <strong>@room.RoomType</strong>
+                                    </h6>
+                                    <p><i class="fa-solid fa-tag text-success"></i> <strong>Rent:</strong> ₹@String.Format("{0:N0}", room.Rent) / month</p>
+                                    <p><i class="fa-solid fa-lock text-danger"></i> <strong>Security Deposit:</strong> ₹@room.SecurityDeposit</p>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                    <!-- Custom Styling -->
+                    <style>
+                        .room-container {
+                            overflow-x: auto;
+                            white-space: nowrap;
+                            padding-bottom: 10px;
+                            margin-bottom: 20px;
+                        }
+
+                        .room-scroll {
+                            display: flex;
+                            gap: 15px;
+                        }
+
+                        .room-card {
+                            display: inline-block;
+                            min-width: 220px;
+                            max-width: 250px;
+                            background: #f9f9f9;
+                            border-radius: 10px;
+                            padding: 15px;
+                            transition: transform 0.2s ease-in-out;
+                            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                            text-align: center;
+                        }
+
+                            .room-card:hover {
+                                transform: scale(1.05);
+                            }
+
+                        .room-title {
+                            font-size: 1.1rem;
+                            font-weight: 600;
+                            color: #333;
+                            margin-bottom: 8px;
+                        }
+
+                        .room-card p {
+                            font-size: 0.9rem;
+                            color: #555;
+                            margin: 5px 0;
+                        }
+
+                        /* Scrollbar Styling */
+                        .room-container::-webkit-scrollbar {
+                            height: 8px;
+                        }
+
+                        .room-container::-webkit-scrollbar-thumb {
+                            background: #6c757d;
+                            border-radius: 10px;
+                        }
+                    </style>
+
+                    <!-- Rules Section -->
+                    <h5 class="mt-3 text-danger">
+                        <i class="fa-solid fa-gavel"></i> Rules
+                    </h5>
+
+                    @if (!string.IsNullOrEmpty(Model.Rules))
+                    {
+                        <div class="rules-container">
+                            <div class="rules-list">
+                                @foreach (var rule in Model.Rules.Split(';'))
+                                {
+                                    <div class="rule-item">
+                                        <i class="fa-solid fa-exclamation-circle text-danger"></i> @rule
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <p class="text-muted">No specific rules mentioned.</p>
+                    }
+
+                    <!-- Custom Styling -->
+                    <style>
+                        .rules-container {
+                            overflow-x: auto;
+                            white-space: nowrap;
+                            padding-bottom: 10px;
+                        }
+
+                        .rules-list {
+                            display: flex;
+                            gap: 8px;
+                            padding: 5px 0;
+                        }
+
+                        .rule-item {
+                            background: #fff3f3;
+                            border-radius: 6px;
+                            padding: 6px 12px;
+                            font-size: 0.9rem;
+                            color: #b71c1c;
+                            display: flex;
+                            align-items: center;
+                            gap: 5px;
+                            min-width: 160px;
+                            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+                            transition: background 0.3s ease-in-out, transform 0.2s;
+                        }
+
+                            .rule-item:hover {
+                                background: #ffe6e6;
+                                transform: translateY(-2px);
+                            }
+
+                            .rule-item i {
+                                font-size: 1rem;
+                                color: #dc3545;
+                            }
+                    </style>
+                    <br />
+                    @if (!string.IsNullOrEmpty(Model.LocationLink))
+                    {
+                        <div class="mb-3">
+                            <label class="fw-bold">Location:</label>
+                            <a href="@Model.LocationLink" target="_blank" class="btn btn-outline-primary">
+                                View on Google Maps
+                            </a>
+                        </div>
+                    }
+                    <!-- Contact Details -->
+                    <h5 class="mt-3 text-primary"><i class="fa-solid fa-phone"></i> Contact</h5>
+                    <p><strong>Phone:</strong> @Model.Contact</p>
+
+                    <div class="d-flex gap-2 mt-3">
+                        <a href="@Url.Action("Index", "Property")" class="btn btn-secondary"><i class="fa-solid fa-arrow-left"></i> Back</a>
+                        <a href="tel:@Model.Contact" class="btn btn-success"><i class="fa-solid fa-phone"></i> Call</a>
+                        <a href="https://wa.me/@Model.Contact?text=@Uri.EscapeDataString(
+    $"🌟 Hello !\n" +
+    $"I came across your PG: '{Model.Title}' in {Model.City}, {Model.State} and I'm really interested! 🏡✨\n" +
+    "Can you share more details? 📜\n" +
+    $"Here is the listing link: {Request.Url}\n\n" +
+    "Looking forward to your response! 😊"
+    )"
+                           target="_blank" class="btn btn-success">
+                            <i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp
+                        </a>
+
+                    </div>
+                    <!-- ⭐ Rate Property (Centered) -->
+                    <div class="rating-container">
+                        <h6 class="text-primary">
+                            <i class="fa-solid fa-star text-warning"></i> Rate this Property
+                        </h6>
+
+                        <!-- ⭐ Star Rating (Centered) -->
+                        <div class="rating">
+                            <span class="star" data-value="1">&#9733;</span>
+                            <span class="star" data-value="2">&#9733;</span>
+                            <span class="star" data-value="3">&#9733;</span>
+                            <span class="star" data-value="4">&#9733;</span>
+                            <span class="star" data-value="5">&#9733;</span>
+                        </div>
+
+                        <p class="mt-1">
+                            <strong>Rating:</strong>
+                            <span id="averageRating" class="rating-number">Loading...</span> / 5
+                        </p>
+                    </div>
+
+                    <!-- ✅ JavaScript for Star Rating -->
+                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                    <script>
+$(document).ready(function () {
+    var propertyId = @Model.Id;
+
+    // ✅ Fetch Overall Rating
+    $.get("/Rating/GetAverageRating", { propertyId: propertyId }, function (data) {
+        $("#averageRating").text(data.averageRating.toFixed(1));
+    });
+
+    // ✅ Handle Star Hover & Click
+    $(".star").hover(
+        function () {
+            var hoverValue = $(this).data("value");
+            $(".star").each(function () {
+                if ($(this).data("value") <= hoverValue) {
+                    $(this).addClass("star-hover");
+                }
+            });
+        },
+        function () {
+            $(".star").removeClass("star-hover");
+        }
+    );
+
+    $(".star").click(function () {
+        var stars = $(this).data("value");
+
+        $.post("/Rating/SubmitRating", { propertyId: propertyId, stars: stars }, function (data) {
+            if (data.success) {
+                $("#averageRating").text(data.averageRating.toFixed(1));
+                $(".star").removeClass("star-selected");
+                $(".star").each(function () {
+                    if ($(this).data("value") <= stars) {
+                        $(this).addClass("star-selected");
+                    }
+                });
+                alert("⭐ Rating submitted!");
+            } else {
+                alert("⚠  " + data.message);
+            }
+        });
+    });
+});
+                    </script>
+
+                    <!-- ✅ Centered & Mobile-Friendly Rating UI Styling -->
+                    <style>
+                        .rating-container {
+                            text-align: center; /* ✅ Centering the content */
+                            margin-top: 15px;
+                        }
+
+                        .rating {
+                            font-size: 22px; /* ✅ Small & compact */
+                            cursor: pointer;
+                            display: flex;
+                            justify-content: center; /* ✅ Center stars */
+                            gap: 5px; /* ✅ Spacing between stars */
+                            transition: transform 0.2s ease-in-out;
+                        }
+
+                        .star {
+                            color: #ccc;
+                            transition: transform 0.2s, color 0.2s ease-in-out;
+                        }
+
+                        /* ⭐ Hover Effect */
+                        .star-hover {
+                            color: gold;
+                            transform: scale(1.2);
+                        }
+
+                        /* ⭐ Selected Rating */
+                        .star-selected {
+                            color: gold;
+                        }
+
+                        .rating-number {
+                            font-size: 16px;
+                            font-weight: bold;
+                            color: #333;
+                        }
+                    </style>
+                    <!-- 🗨️ Comment Section (Modern Android App-Like UI) -->
+                    <h6 class="mt-4 text-primary"><i class="fa-solid fa-comments"></i> <span id="totalComments">Loading...</span> Comments</h6>
+
+                    <!-- 📌 Comment Box with Scroll -->
+                    <div id="commentsContainer">
+                        <div id="commentsList" class="comment-box">
+                            <p class="text-center text-muted">Loading comments...</p>
+                        </div>
+                        <br />
+                        <button id="loadMoreBtn" class="btn btn-primary btn-sm load-more-btn" style="display: none;">Load More</button>
+                    </div>
+
+                    <!-- ✍️ Submit Comment Form -->
+                    <div class="comment-input-box">
+                        <textarea id="commentContent" class="form-control" placeholder="Write a comment..." rows="2"></textarea>
+                        <button type="submit" id="submitComment" class="btn btn-primary">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </div>
+
+                    <!-- ✅ JavaScript for Comments -->
+                    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+                    <script>
+$(document).ready(function () {
+    var propertyId = @Model.Id;
+    var currentPage = 1;
+
+    function loadComments() {
+        $.ajax({
+            url: "/Comment/GetComments",
+            type: "GET",
+            data: { propertyId: propertyId, page: currentPage },
+            dataType: "json",
+            success: function (response) {
+                if (response.error) {
+                    console.error("⚠ Error from API:", response.error);
+                    $("#commentsList").html("<p class='text-danger text-center'>⚠ Error loading comments.</p>");
+                    return;
+                }
+
+                // ✅ Update total comments count
+                $("#totalComments").text(response.totalComments);
+
+                if (currentPage === 1) {
+                    $("#commentsList").html(""); // ✅ Clear list on first load
+                }
+
+                response.comments.forEach(comment => {
+                    let commentHtml = `<div class="comment-item" id="comment-${comment.id}">
+                                            <div class="comment-bubble">
+                                                <div class="comment-header">
+                                                    <strong>${comment.user}</strong>
+                                                    <small class="text-muted"> ${comment.date}</small>
+                                                </div>
+                                                <p>${comment.content}</p>
+
+                                            </div>`;
+
+                    if (comment.canDelete) {
+                        commentHtml += `<button class="btn btn-sm btn-danger delete-btn" onclick="deleteComment(${comment.id})">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </button>`;
+                    }
+
+                    commentHtml += `</div>`;
+                    $("#commentsList").append(commentHtml);
+                });
+
+                if (response.hasMore) {
+                    $("#loadMoreBtn").show();
+                    currentPage++; // ✅ Only increase page if more comments exist
+                } else {
+                    $("#loadMoreBtn").hide(); // ✅ Hide button if no more comments
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error("⚠ AJAX Error:", status, error);
+                $("#commentsList").html("<p class='text-danger text-center'>⚠ Failed to load comments. Please try again.</p>");
+            }
+        });
+    }
+
+    loadComments(); // ✅ Load first set of comments
+
+    $("#loadMoreBtn").click(function () {
+        loadComments(); // ✅ Load more comments on button click
+    });
+
+    $("#submitComment").click(function () {
+        var commentText = $("#commentContent").val().trim();
+        if (!commentText) {
+            alert("⚠ Please enter a comment.");
+            return;
+        }
+
+        $.post("/Comment/SubmitComment", {
+            propertyId: propertyId,
+            content: commentText,
+            __RequestVerificationToken: $("input[name='__RequestVerificationToken']").val()
+        }).done(function (data) {
+            if (data.success) {
+                $("#commentContent").val("");
+                alert("✅ Comment submitted successfully!");
+                currentPage = 1;
+                loadComments(); // Refresh comments
+            } else {
+                alert("⚠ Error: " + data.message);
+            }
+        }).fail(function () {
+            alert("⚠ Login required.");
+        });
+    });
+
+    window.deleteComment = function (commentId) {
+        if (!confirm("🗑️ Are you sure you want to delete this comment?")) return;
+
+        $.post("/Comment/DeleteComment", { commentId: commentId }, function (data) {
+            if (data.success) {
+                $(`#comment-${commentId}`).fadeOut();
+                alert("✅ Comment deleted successfully!");
+                currentPage = 1;
+                loadComments(); // Refresh comments after delete
+            } else {
+                alert("⚠ Error: " + data.message);
+            }
+        }).fail(function () {
+            alert("⚠ Failed to delete comment. Please try again.");
+        });
+    };
+});
+                    </script>
+
+                    <!-- ✅ Stylish Mobile-Friendly Comment UI -->
+                    <style>
+                        /* 📌 Comment Box */
+                        .comment-box {
+                            max-height: 250px; /* ✅ Fixed height for scrolling */
+                            overflow-y: auto;
+                            padding: 10px;
+                            border-radius: 10px;
+                            background: #f8f9fa;
+                            box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+                        }
+
+                        /* 📌 Comment Bubble */
+                        .comment-item {
+                            display: flex;
+                            align-items: center;
+                            justify-content: space-between;
+                            padding: 8px;
+                            margin-bottom: 8px;
+                        }
+
+                        .comment-bubble {
+                            max-width: 100%;
+                            background: #ffffff;
+                            padding: 10px;
+                            border-radius: 15px;
+                            box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+                        }
+
+                        .comment-header {
+                            display: flex;
+                            justify-content: space-between;
+                            font-size: 12px;
+                            margin-bottom: 5px;
+                        }
+
+                        /* 🗑️ Delete Button */
+                        .delete-btn {
+                            background: transparent;
+                            border: none;
+                            cursor: pointer;
+                            color: red;
+                            font-size: 16px;
+                            transition: transform 0.2s;
+                        }
+
+                            .delete-btn:hover {
+                                transform: scale(1.1);
+                            }
+
+                        /* 📌 Comment Input Box */
+                        .comment-input-box {
+                            display: flex;
+                            align-items: center;
+                            background: #fff;
+                            border-radius: 25px;
+                            padding: 5px;
+                            margin-top: 10px;
+                            box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+                        }
+
+                            .comment-input-box textarea {
+                                flex: 1;
+                                border: none;
+                                outline: none;
+                                padding: 10px;
+                                border-radius: 20px;
+                                resize: none;
+                                background: #f1f1f1;
+                            }
+
+                            .comment-input-box button {
+                                background: #007bff;
+                                border: none;
+                                color: white;
+                                border-radius: 50%;
+                                padding: 10px;
+                                margin-left: 5px;
+                                cursor: pointer;
+                                transition: background 0.3s;
+                            }
+
+                                .comment-input-box button:hover {
+                                    background: #0056b3;
+                                }
+
+                        /* 📌 Load More Button */
+                        .load-more-btn {
+                            display: block;
+                            margin: auto;
+                            border-radius: 5px;
+                            font-weight: bold;
+                        }
+                    </style>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal for Full Image -->
+<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <button type="button" class="btn-close position-absolute top-0 end-0 m-3" data-bs-dismiss="modal"></button>
+                <img id="fullImage" src="" class="img-fluid rounded shadow-lg" alt="Full Image">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- JavaScript for Image Modal -->
+<script>
+    function showFullImage(imageUrl) {
+        document.getElementById('fullImage').src = imageUrl;
+    }
+</script>

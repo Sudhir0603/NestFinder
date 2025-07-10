@@ -1,0 +1,100 @@
+﻿@model NestFinder.Models.Contact
+
+@{
+    ViewBag.Title = "Contact Us";
+}
+
+<div class="container mt-4">
+    <div class="card shadow-lg border-0 rounded-lg p-4">
+        <h2 class="text-center text-primary mb-3">
+            <i class="fa fa-envelope"></i> Contact Us
+        </h2>
+
+        <!-- ✅ Success Message -->
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fa fa-check-circle"></i> @TempData["SuccessMessage"]
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        }
+
+    <form method="post" action="@Url.Action("ContactForm", "Contact")" id="contactForm">
+        @Html.AntiForgeryToken()
+
+        <div class="mb-3">
+            <label class="form-label"><i class="fa fa-user"></i> Name</label>
+            <div class="input-group">
+                <span class="input-group-text"><i class="fa fa-user"></i></span>
+                @Html.TextBoxFor(m => m.Name, new { @class = "form-control", placeholder = "Enter your name", required = "required" })
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label"><i class="fa fa-envelope"></i> Email</label>
+            <div class="input-group">
+                <span class="input-group-text"><i class="fa fa-envelope"></i></span>
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", type = "email", placeholder = "Enter your email", required = "required" })
+            </div>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">
+                <i class="fa fa-phone"></i>
+                Phone Number
+            </label>
+            <div class="input-group">
+                <span class="input-group-text">
+                    <i class="fa fa-phone"></i>
+                </span>
+                @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control", placeholder = "Enter your Phone Number", required = "required" })
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label"><i class="fa fa-comment"></i> Message</label>
+            <div class="input-group">
+                <span class="input-group-text"><i class="fa fa-comment"></i></span>
+                @Html.TextAreaFor(m => m.Message, new { @class = "form-control", rows = 4, placeholder = "Enter your message", required = "required" })
+            </div>
+        </div>
+
+        <div class="d-grid">
+            <button type="submit" class="btn btn-primary shadow-sm">
+                <i class="fa fa-paper-plane"></i> Send Message
+            </button>
+        </div>
+    </form>
+    </div>
+</div>
+
+<!-- ✅ JavaScript for Validation & Smooth Animations -->
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let inputs = document.querySelectorAll(".form-control");
+
+        inputs.forEach(input => {
+            input.addEventListener("focus", function () {
+                this.parentElement.classList.add("input-focus");
+            });
+
+            input.addEventListener("blur", function () {
+                this.parentElement.classList.remove("input-focus");
+            });
+        });
+
+        // ✅ Basic Client-Side Validation
+        document.getElementById("contactForm").addEventListener("submit", function (event) {
+            let name = document.querySelector("input[name='Name']").value.trim();
+            let email = document.querySelector("input[name='Email']").value.trim();
+            let message = document.querySelector("textarea[name='Message']").value.trim();
+
+            if (name === "" || email === "" || message === "") {
+                alert("⚠ Please fill in all fields!");
+                event.preventDefault();
+            }
+        });
+    });
+</script>
+
+<!-- ✅ Extra CSS for Better UI -->
+

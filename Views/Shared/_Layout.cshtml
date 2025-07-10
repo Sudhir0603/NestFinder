@@ -1,0 +1,192 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- App Logo -->
+    <link rel="icon" type="image/png" href="~/images/property-color-icon.png">
+
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+
+<body>
+    <nav class="navbar fixed-top navbar-expand-sm navbar-toggleable-sm navbar-Light bg-white  ">
+        <div class="container">
+            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index"><img src="~/images/NestFinder logo.jpeg" alt="Logo" width="80px" class="d-inline-block align-text-top" /> </a>
+
+            
+            @Html.ActionLink("NestFinder", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Toggle navigation" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
+                <ul class="navbar-nav flex-grow-1">
+                    @if (!User.IsInRole("Admin"))
+                    {
+                        <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+
+                        <li>@Html.ActionLink("Property", "Index", "Property", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("Post Property", "Create", "Property", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("My Properties ", "MyProperties", "Property", new { area = "" }, new { @class = "nav-link" })</li>
+
+                        <li>@Html.ActionLink("Contact Us", "ContactForm", "Contact", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("PrivacyPolicy", "PrivacyPolicy", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+
+                       
+
+
+                    }
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li>@Html.ActionLink("Dashboard", "Dashboard", "Admin", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("Manage Users", "ManageUsers", "Admin", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("Pending Properties", "PendingProperties", "Admin", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("User Queries", "ViewQueries", "Contact", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("Report", "Report", "Admin", new { area = "" }, new { @class = "nav-link" })</li>
+
+                    }
+
+                </ul>
+                @Html.Partial("_LoginPartial")
+            </div>
+        </div>
+    </nav>
+    
+    <br />
+    <br />
+    <br />
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var carousels = document.querySelectorAll('.carousel');
+            carousels.forEach(function (carousel) {
+                new bootstrap.Carousel(carousel, {
+                    interval: 3000, // Auto-slide every 3 seconds
+                    pause: 'hover', // Pause on hover
+                    wrap: true // Infinite loop
+                });
+            });
+        });
+    </script>
+    
+    <div class="container body-content">
+        @RenderBody()
+        <hr />
+        <footer class=" text-dark text-center ">
+            <p>
+                &copy; @DateTime.Now.Year - NestFinder |
+                <a href="@Url.Action("PrivacyPolicy", "Home")" class="text-dark">Privacy Policy</a>
+            </p>
+        </footer>
+
+    </div>
+    
+  
+    <nav class="navbar fixed-bottom bg-light border-top">
+
+        @if (!User.IsInRole("Admin"))
+        {
+            <div class="container d-flex justify-content-around ">
+                <div class="text-center ">
+                    <a class="nav-link text-dark" href="@Url.Action("Index", "Home")">
+                        <img src="~/images/widget-icon.png" alt="Property" style="width: 20px;">
+                        <div class="text-muted"><small>Dashboard</small></div>
+                    </a>
+                </div>
+                <div class="text-center">
+                    <a class="nav-link text-dark" href="@Url.Action("Create", "Property")">
+
+                        <img src="~/images/add-round-green-icon.png" alt="Services" style="width: 24px;">
+                        <div class="text-muted"><small>Post Property</small></div>
+                    </a>
+                </div>
+                <div class="text-center">
+                    <a class="nav-link text-dark" href="@Url.Action("Search", "Property")">
+                        <img src="~/images/find-icon.png" alt="Logo" style="width: 20px; ">
+                        <div class="text-muted"><small>NestFinder</small></div>
+                    </a>
+                </div>
+                <div class="text-center">
+                    <a class="nav-link text-dark" href="@Url.Action("MyFavorites", "Property")">
+                        <img src="~/images/heart-thin-icon.png" alt="Logo" style="width: 20px; ">
+                        <div class="text-muted"><small>Favorites</small></div>
+                    </a>
+                </div>
+
+                <div class="text-center ">
+                    <a class="nav-link text-dark" href="@Url.Action("Profile", "Account")">
+                        <img src="~/images/employee-icon.png" alt="Plans" style="width: 20px;">
+                        <div class="text-muted"><small>Profile</small></div>
+                    </a>
+                </div>
+            </div>
+        }
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="container d-flex justify-content-around ">
+                <div class="text-center ">
+                    <a class="nav-link text-dark" href="@Url.Action("Dashboard", "Admin")">
+                        <img src="~/images/widget-icon.png" alt="Property" style="width: 25px;">
+                        <div class="text-muted"><small>Dashboard</small></div>
+                    </a>
+                </div>
+                <div class="text-center">
+                    <a class="nav-link text-dark" href="@Url.Action("ManageUsers", "Admin")">
+
+                        <img src="~/images/team-management.png" alt="Services" style="width: 25px;">
+                        <div class="text-muted"><small>Manage Users</small></div>
+                    </a>
+                </div>
+                <div class="text-center">
+                    <a class="nav-link text-dark" href="@Url.Action("ViewQueries", "Contact")">
+                        <img src="~/images/question.png" alt="Logo" style="width: 25px; ">
+                        <div class="text-muted"><small>Queries</small></div>
+                    </a>
+                </div>
+                <div class="text-center">
+                    <a class="nav-link text-dark" href="@Url.Action("PendingProperties", "Admin")">
+                        <img src="~/images/work-plan.png" alt="Logo" style="width: 25px; ">
+                        <div class="text-muted"><small>Pending</small></div>
+                    </a>
+                </div>
+
+                <div class="text-center ">
+                    <a class="nav-link text-dark" href="@Url.Action("Report", "Admin")">
+                        <img src="~/images/report (1).png" alt="Plans" style="width: 25px;">
+                        <div class="text-muted"><small>Report</small></div>
+                    </a>
+                </div>
+            </div>
+        }
+        </nav>
+
+
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+    <!-- jQuery for AJAX -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+</body>
+</html>

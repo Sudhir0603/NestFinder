@@ -1,0 +1,83 @@
+﻿@{
+    ViewBag.Title = "About NestFinder";
+    ViewBag.Message = "Your Trusted Platform for Finding the Perfect PG Accommodation";
+}
+
+<main aria-labelledby="title" class="container mt-4">
+    <div class="text-center">
+        <h2 id="title" class="display-4 fw-bold text-primary">@ViewBag.Title</h2>
+        <h3 class="text-secondary">@ViewBag.Message</h3>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <img src="~/images/NestFinder logo.jpeg" class="img-fluid rounded shadow-lg" alt="NestFinder PG">
+        </div>
+        <div class="col-md-6">
+            <p class="lead">Welcome to <strong>NestFinder</strong>, your go-to platform for finding the best <b>PG accommodations</b> in your city. Whether you're a student or a working professional, we help you discover comfortable and affordable living spaces.</p>
+
+            <h4 class="mt-3 text-success">Why Choose NestFinder?</h4>
+            <ul class="list-group">
+                <li class="list-group-item">🔍 <strong>Easy Search:</strong> Find PGs based on location, budget, and amenities.</li>
+                <li class="list-group-item">✅ <strong>Verified Listings:</strong> Ensuring quality and authenticity.</li>
+                <li class="list-group-item">🗺️ <strong>Interactive Maps:</strong> Locate PGs near colleges and workplaces.</li>
+                <li class="list-group-item">💬 <strong>Direct Contact:</strong> Connect with property owners hassle-free.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="mt-5 text-center">
+        <h4 class="text-info">How It Works?</h4>
+        <div class="row">
+            <div class="col-md-3">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">🔍 Search & Filter</h5>
+                        <p class="card-text">Use advanced filters to find your ideal PG.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">📸 View Details</h5>
+                        <p class="card-text">Check images, amenities, and rules before booking.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">📞 Connect</h5>
+                        <p class="card-text">Directly contact PG owners for inquiries.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card shadow">
+                    <div class="card-body">
+                        <h5 class="card-title">🏡 Move In</h5>
+                        <p class="card-text">Find your perfect home and start your stay hassle-free.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-5 text-center">
+        <h4 class="text-warning">🏠 Start Your Search Today!</h4>
+        <p class="lead">Find a PG that suits your needs with just a few clicks. Start your search now!</p>
+        <a href="@Url.Action("Search", "Property")" class="btn btn-primary btn-lg">Find PG Now</a>
+      
+    </div>
+</main>
+
+<style>
+    .card {
+        transition: transform 0.3s ease-in-out;
+    }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+</style>

@@ -1,0 +1,64 @@
+﻿@model NestFinder.Models.Property
+
+@{
+    ViewBag.Title = "Edit Property";
+}
+
+<div class="container mt-5">
+    <h2 class="mb-4 text-center text-primary">Edit Property</h2>
+
+    @using (Html.BeginForm("Edit", "Property", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.HiddenFor(model => model.Id)
+
+        <div class="card shadow-lg border-0 rounded-4">
+            <div class="card-body">
+                <h4 class="card-title mb-4 text-secondary">Property Details</h4>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        @Html.LabelFor(model => model.Title, new { @class = "form-label fw-bold" })
+                        @Html.TextBoxFor(model => model.Title, new { @class = "form-control" })
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        @Html.LabelFor(model => model.Price, new { @class = "form-label fw-bold" })
+                        @Html.TextBoxFor(model => model.Price, new { @class = "form-control", type = "number", step = "0.01" })
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    @Html.LabelFor(model => model.Description, new { @class = "form-label fw-bold" })
+                    @Html.TextAreaFor(model => model.Description, new { @class = "form-control", rows = "3" })
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        @Html.LabelFor(model => model.Address, new { @class = "form-label fw-bold" })
+                        @Html.TextBoxFor(model => model.Address, new { @class = "form-control" })
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        @Html.LabelFor(model => model.City, new { @class = "form-label fw-bold" })
+                        @Html.TextBoxFor(model => model.City, new { @class = "form-control" })
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        @Html.LabelFor(model => model.RoomType, new { @class = "form-label fw-bold" })
+                        @Html.DropDownListFor(model => model.RoomType, new SelectList(new[] { "Private Room", "Shared Room", "Studio Apartment" }), "Select Room Type", new { @class = "form-select" })
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        @Html.LabelFor(model => model.FurnishingStatus, new { @class = "form-label fw-bold" })
+                        @Html.DropDownListFor(model => model.FurnishingStatus, new SelectList(new[] { "Fully Furnished", "Semi-Furnished", "Unfurnished" }), "Select Furnishing Status", new { @class = "form-select" })
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 shadow-sm">Update Property</button>
+            </div>
+        </div>
+    }
+</div>

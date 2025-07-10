@@ -1,0 +1,45 @@
+﻿@{
+    ViewBag.Title = "Admin Dashboard";
+}
+
+<h2 class="text-center text-primary mb-4">Admin Dashboard</h2>
+
+<div class="container">
+    <div class="row">
+        <!-- Users Card -->
+        <div class="col-md-4 col-12 mb-3">
+            <a href="@Url.Action("ManageUsers", "Admin")" class="text-decoration-none">
+                <div class="card text-center shadow-lg border-0 rounded-4 p-3" style="background: linear-gradient(135deg, #6E85B7, #B2C8DF);">
+                    <i class="fas fa-users fa-3x text-white"></i>
+                    <h4 class="text-white mt-2">Total Users</h4>
+                    <h2 class="text-white fw-bold">@ViewBag.UsersCount</h2>
+                </div>
+                </a>
+        </div>
+
+        <!-- Properties Card -->
+        <div class="col-md-4 col-12 mb-3">
+            <a href="@Url.Action("TotalProperties", "Admin")" class="text-decoration-none">
+                <div class="card text-center shadow-lg border-0 rounded-4 p-3" style="background: linear-gradient(135deg, #FFA500, #FFC107);">
+                    <i class="fas fa-home fa-3x text-white"></i>
+                    <h4 class="text-white mt-2">Total Properties</h4>
+                    <h2 class="text-white fw-bold">@ViewBag.PropertiesCount</h2>
+                </div>
+                </a>
+        </div>
+
+        <!-- Pending Approvals Card -->
+        <div class="col-md-4 col-12 mb-3">
+            <a href="@Url.Action("PendingProperties", "Admin")" class="text-decoration-none">
+                <div class="card text-center shadow-lg border-0 rounded-4 p-3" style="background: linear-gradient(135deg, #DC3545, #FF6B6B);">
+                    <i class="fas fa-exclamation-circle fa-3x text-white"></i>
+                    <h4 class="text-white mt-2">Pending Approvals</h4>
+                    <h2 class="text-white fw-bold">@ViewBag.PendingApprovals</h2>
+                </div>
+                </a>
+        </div>
+    </div>
+</div>
+
+<!-- FontAwesome for Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">

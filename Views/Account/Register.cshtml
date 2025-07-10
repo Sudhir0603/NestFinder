@@ -1,0 +1,62 @@
+﻿@model NestFinder.Models.RegisterViewModel
+@{
+    ViewBag.Title = "Register";
+}
+
+<link rel="stylesheet" href="@Url.Content("~/Content/Account.css")" />
+
+<div class="register-container">
+    <div class="register-card">
+        <h2 class="text-center">@ViewBag.Title</h2>
+        <p class="text-center text-muted">Create a new account</p>
+        <hr />
+
+        @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { role = "form", enctype = "multipart/form-data" }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary("", new { @class = "text-danger" })
+
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.FullName, new { @class = "form-label" })
+                @Html.TextBoxFor(m => m.FullName, new { @class = "form-control", placeholder = "Full Name" })
+            </div>
+
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.Email, new { @class = "form-label" })
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "Email" })
+            </div>
+
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.Password, new { @class = "form-label" })
+                @Html.PasswordFor(m => m.Password, new { @class = "form-control", placeholder = "Password" })
+            </div>
+
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.ConfirmPassword, new { @class = "form-label" })
+                @Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control", placeholder = "Confirm Password" })
+            </div>
+
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.City, new { @class = "form-label" })
+                @Html.TextBoxFor(m => m.City, new { @class = "form-control", placeholder = "City" })
+            </div>
+
+            <div class="form-group mb-3">
+                @Html.LabelFor(m => m.State, new { @class = "form-label" })
+                @Html.TextBoxFor(m => m.State, new { @class = "form-control", placeholder = "State" })
+            </div>
+
+            <button type="submit" class="btn btn-dark">Register</button>
+        }
+
+    <div class="links">
+        <a href="@Url.Action("Login", "Account")">Login</a> |
+        <a href="@Url.Action("Index", "Home")">Back</a>
+
+    </div>
+    </div>
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

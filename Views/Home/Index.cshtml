@@ -1,0 +1,652 @@
+﻿
+@model NestFinder.Models.HomeViewModel
+@{
+    ViewBag.Title = "Home Page";
+}
+
+
+<main>
+
+
+    @{
+        ViewData["Title"] = "NestFinder";
+    }
+
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <link rel="stylesheet" href="@Url.Content("~/Content/Site.css")" />
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Post Your Property</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    </head>
+    <body>
+       
+        
+        <script>
+    function redirectToSearch() {
+        window.location.href = '@Url.Action("Search", "Property")';
+    }
+        </script>
+        <style>
+            .search-container {
+                position: relative;
+                width: 50%;
+                max-width: 450px;
+                cursor: pointer;
+                transition: transform 0.3s ease-in-out;
+            }
+
+
+
+            .search-input {
+                width: 100%;
+                padding: 14px 50px 14px 20px;
+                border-radius: 30px;
+                border: 2px solid #007bff;
+                outline: none;
+                font-size: 16px;
+                background: #f8f9fa;
+                transition: all 0.3s ease-in-out;
+                cursor: pointer;
+            }
+
+                .search-input:focus {
+                    border-color: #0056b3;
+                    box-shadow: 0px 0px 12px rgba(0, 123, 255, 0.7);
+                }
+
+            .search-btn {
+                position: absolute;
+                right: 8px;
+                top: 50%;
+                transform: translateY(-50%);
+                background: linear-gradient(45deg, #007bff, #00d4ff);
+                color: white;
+                border: none;
+                padding: 12px 15px;
+                border-radius: 50%;
+                cursor: pointer;
+                transition: all 0.3s ease-in-out;
+                box-shadow: 0px 0px 8px rgba(0, 123, 255, 0.5);
+            }
+
+                .search-btn:hover {
+                    background: linear-gradient(45deg, #0056b3, #0099cc);
+                    box-shadow: 0px 0px 12px rgba(0, 86, 179, 0.8);
+                }
+
+                .search-btn i {
+                    font-size: 18px;
+                }
+        </style>
+
+        <div class="card shadow-lg border-0 p-4">
+            <div class="container mt-3">
+                <div class="d-flex justify-content-center">
+                    <div class="search-container" onclick="redirectToSearch()">
+                        <input type="text" class="form-control search-input" placeholder="🏡 Search...  " readonly>
+                        <button class="search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <br />
+            <div class="card-body text-center">
+                <h2 class="card-title fw-bold">🏡 The One Stop Solution</h2>
+                <h6 class="card-subtitle text-muted">For all your home needs</h6>
+            </div>
+
+            <div class="row g-4 mt-3">
+                <!-- Post Property -->
+                <div class="col-md-6">
+                    <div class="card bg-info1 border-0 shadow-sm property-card h-100">
+                        <div class="card-body position-relative">
+                            <a class="nav-link text-dark text-decoration-none" href="@Url.Action("Create", "Property")">
+                                <h5 class="card-title fw-bold">📢 Post Your Property</h5>
+                                <p class="card-text text-secondary">Rent your property for <span class="text-primary fw-bold">FREE</span></p>
+                                <img src="~/images/property-color-icon1.png" class="rounded float-end img-fluid" alt="Post Property" style="width: 140px;">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search Property -->
+                <div class="col-md-6">
+                    <div class="card bg-success1 border-0 shadow-sm property-card h-100">
+                        <div class="card-body position-relative">
+                            <a class="nav-link text-dark text-decoration-none" href="@Url.Action("Search", "Property")">
+                                <h5 class="card-title fw-bold">🔍 Property Search</h5>
+                                <p class="card-text text-secondary">Access <span class="text-success fw-bold">@Model.TotalProperties+ verified</span> properties with zero brokerage</p>
+                                <img src="~/images/inspection.png" class="rounded float-end img-fluid" alt="Search Property" style="width: 140px;">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <div class="container mt-5">
+            <h2 class="text-center">🏡 Featured <span class="text-primary">Properties</span></h2>
+
+            <!-- Scrollable Wrapper for Mobile -->
+            <div class="scroll-container mt-4">
+                <div class="d-flex flex-nowrap">
+                    @foreach (var property in Model.RandomProperties)
+                    {
+                        <div class="property-card">
+                            <div class="card shadow-sm border-0">
+                                <div id="carousel-@property.Id" class="carousel slide" data-bs-ride="carousel">
+                                    <div class="carousel-indicators">
+                                        @if (!string.IsNullOrEmpty(property.ImageUrls))
+                                        {
+                                            var imageArray = property.ImageUrls.Split(';');
+                                            for (int i = 0; i < imageArray.Length; i++)
+                                            {
+                                                <button type="button" data-bs-target="#carousel-@property.Id" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")"></button>
+                                            }
+                                        }
+                                    </div>
+
+                                    <div class="carousel-inner">
+                                        @if (!string.IsNullOrEmpty(property.ImageUrls))
+                                        {
+                                            var imageArray = property.ImageUrls.Split(';');
+                                            for (int i = 0; i < imageArray.Length; i++)
+                                            {
+                                                <div class="carousel-item @(i == 0 ? "active" : "")">
+                                                    <img src="@imageArray[i]" class="d-block w-100 rounded-top" alt="Property Image" style="height: 180px; object-fit: cover;">
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+
+                                    <!-- Previous & Next Controls -->
+                                    <button class="carousel-control-prev" type="button" data-bs-target="#carousel-@property.Id" data-bs-slide="prev">
+                                        <span class="carousel-control-prev-icon"></span>
+                                    </button>
+                                    <button class="carousel-control-next" type="button" data-bs-target="#carousel-@property.Id" data-bs-slide="next">
+                                        <span class="carousel-control-next-icon"></span>
+                                    </button>
+                                </div>
+
+                                <div class="card-body">
+                                    <h6 class="card-title">@property.Title</h6>
+                                    @*<p class="card-text text-muted">@property.Description</p>*@
+                                    <p><strong>📍 Address:</strong> @property.Address</p>
+                                    <p><strong> 🏙️ City:</strong> @property.City</p>
+
+                                    <p><strong>💰 Price:</strong> ₹@property.Price</p>
+
+                                    <a href="@Url.Action("Details", "Property", new { id = property.Id })" class="btn btn-primary btn-sm">View Details</a>
+                              
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- CSS Styling -->
+        <style>
+            .scroll-container {
+                overflow-x: auto;
+                white-space: nowrap;
+                padding-bottom: 10px;
+            }
+
+                .scroll-container::-webkit-scrollbar {
+                    display: none;
+                }
+
+            .property-card {
+                min-width: 280px;
+                margin-right: 15px;
+                border-radius: 10px;
+                overflow: hidden;
+            }
+
+
+
+            .card-body h6 {
+                font-size: 14px;
+                font-weight: bold;
+            }
+
+            .card-text {
+                font-size: 12px;
+            }
+
+            .carousel-indicators button {
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background-color: gray;
+            }
+        </style>
+
+        <div class="cta-section text-white text-center py-5">
+            <div class="container">
+                <h2 class="fw-bold display-4 animate-fade-in">🏠 Your Perfect Home Awaits!</h2>
+                <p class="lead mt-3">Browse top-rated listings, post your property, and find your dream home effortlessly.</p>
+
+                <div class="d-flex flex-wrap justify-content-center mt-4 gap-3">
+                    <a href="@Url.Action("Create", "Property")" class="btn btn-glow btn-lg px-4">
+                        <i class="fas fa-plus-circle"></i> Post Your Property
+                    </a>
+                    <a href="@Url.Action("Search", "Property")" class="btn btn-glow btn-lg px-4 btn-outline">
+                        <i class="fas fa-search"></i> Find a Home
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Custom Styling -->
+        <style>
+    /* CTA Background */
+    .cta-section {
+        background: linear-gradient(135deg, rgba(0, 123, 255, 0.8), rgba(0, 188, 212, 0.8)),
+                    url('https://source.unsplash.com/1600x900/?house,real-estate') center/cover;
+        backdrop-filter: blur(5px);
+        border-radius: 12px;
+    }
+
+    /* Glow Effect Buttons */
+    .btn-glow {
+        background: linear-gradient(135deg, #ff7e5f, #feb47b);
+        color: white;
+        font-weight: bold;
+        border-radius: 50px;
+        transition: all 0.3s ease-in-out;
+        box-shadow: 0 4px 10px rgba(255, 126, 95, 0.3);
+    }
+
+    .btn-glow:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(255, 126, 95, 0.5);
+    }
+
+    .btn-outline {
+        border: 2px solid white;
+        background: transparent;
+    }
+
+    .btn-outline:hover {
+        background: white;
+        color: #333;
+    }
+
+    /* Animation */
+    .animate-fade-in {
+        opacity: 0;
+        animation: fadeIn 1s ease-in-out forwards;
+    }
+
+   
+        </style>
+
+        <!-- FontAwesome Icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+
+        <div class="container mt-4">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h2 class="fw-bold">Curated PG Collections</h2>
+
+            </div>
+
+            <!-- Scrollable Row -->
+            <div class="scroll-container">
+                <div class="d-flex flex-nowrap">
+                    <!-- Card for Working Professionals -->
+                    <div class="card property-card" onclick="redirectTo('Working Professionals', 'Any')">
+                        <img src="~/images/working.svg" class="card-img" alt="Working Professionals">
+                        <div class="card-overlay">
+                            <h5 class="card-title">Working Professionals</h5>
+                            <p class="card-text">@Model.WorkingProfessionalsCount+ Properties</p>
+                        </div>
+                    </div>
+
+                    <!-- Card for Students -->
+                    <div class="card property-card" onclick="redirectTo('Students', 'Any')">
+                        <img src="~/images/boy.jpg" class="card-img" alt="Students">
+                        <div class="card-overlay">
+                            <h5 class="card-title">Students</h5>
+                            <p class="card-text">@Model.StudentsCount+ Properties</p>
+                        </div>
+                    </div>
+
+                    <!-- Card for Boys -->
+                    <div class="card property-card" onclick="redirectTo('Any', 'Boys')">
+                        <img src="~/images/boy1.jpg" class="card-img" alt="Boys PG">
+                        <div class="card-overlay">
+                            <h5 class="card-title">Boys</h5>
+                            <p class="card-text">@Model.BoysCount+ Properties</p>
+                        </div>
+                    </div>
+
+                    <!-- Card for Girls -->
+                    <div class="card property-card" onclick="redirectTo('Any', 'Girls')">
+                        <img src="~/images/girl.jpg" class="card-img" alt="Girls PG">
+                        <div class="card-overlay">
+                            <h5 class="card-title">Girls</h5>
+                            <p class="card-text">@Model.GirlsCount+ Properties</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- CSS Styling -->
+        <style>
+            .scroll-container {
+                overflow-x: auto;
+                white-space: nowrap;
+                padding-bottom: 10px;
+            }
+
+                .scroll-container::-webkit-scrollbar {
+                    display: none;
+                }
+
+            .property-card {
+                min-width: 250px;
+                margin-right: 15px;
+                border-radius: 10px;
+                overflow: hidden;
+                position: relative;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
+
+
+            .card-img {
+                width: 100%;
+                height: 120px;
+                object-fit: cover;
+            }
+
+            .card-overlay {
+                position: absolute;
+                bottom: 0;
+                width: 100%;
+                background: rgba(0, 0, 0, 0.6);
+                color: white;
+                text-align: center;
+                padding: 5px;
+            }
+
+            h5 {
+                font-size: 14px;
+                margin: 0;
+            }
+
+            .card-text {
+                font-size: 12px;
+                margin: 0;
+            }
+        </style>
+
+
+
+
+        <!-- ✅ CTA Styling -->
+        <style>
+            /* 🔥 Vibrant Gradient Background */
+            .cta-section {
+                background: linear-gradient(135deg, #6a11cb, #2575fc); /* Purple to Blue Gradient */
+                padding: 80px 0;
+                border-radius: 15px;
+            }
+
+            /* ✨ Glowing Button Effect */
+            .btn-glow {
+                font-size: 1.2rem;
+                font-weight: bold;
+                border-radius: 10px;
+                padding: 12px 25px;
+                transition: all 0.3s ease-in-out;
+                color: #fff;
+                background: #ff7eb3;
+                border: 2px solid #ff4d79;
+                box-shadow: 0 0 15px rgba(255, 126, 179, 0.6);
+            }
+
+                .btn-glow:hover {
+                    background: #ff4d79;
+                    box-shadow: 0 0 25px rgba(255, 77, 121, 0.8);
+                    transform: scale(1.05);
+                }
+
+            .btn-outline {
+                background: transparent;
+                border: 2px solid #fff;
+            }
+
+                .btn-outline:hover {
+                    background: #fff;
+                    color: #000;
+                }
+
+
+            .property-card {
+                position: relative;
+                overflow: hidden;
+                border-radius: 15px;
+                cursor: pointer;
+            }
+
+
+
+            .card-img {
+                width: 100%;
+                height: 250px;
+                object-fit: cover;
+                border-radius: 15px;
+            }
+
+            .card-overlay {
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                padding: 15px;
+                background: rgba(0, 0, 0, 0.6);
+                color: white;
+                border-radius: 0 0 15px 15px;
+                text-align: left;
+            }
+
+            .card-title {
+                font-size: 1.2rem;
+                font-weight: bold;
+            }
+
+            .card-text {
+                font-size: 0.9rem;
+                opacity: 0.8;
+            }
+        </style>
+
+
+
+
+        <div class="container mt-5">
+            <!-- Customer Support Section -->
+            <div id="support-section" class="card support-card p-4 shadow-lg">
+                <!-- Header -->
+                <div class="support-header">
+                    <h5 class="text-white"><i class="fa-solid fa-headset"></i> Customer Support</h5>
+                </div>
+
+                <!-- Contact Info -->
+                <div class="support-content mt-3">
+                    <!-- Call Us -->
+                    <div class="d-flex align-items-center mb-3 contact-item">
+                        <i class="fa-solid fa-phone-volume text-primary me-2"></i>
+                        <span class="fw-bold me-2">Call Us:</span>
+                        <a href="tel:+917666973403" class="phone-number">+91 7666973403</a>
+                    </div>
+                    <!-- Email Us -->
+                    <div class="d-flex align-items-center contact-item">
+                        <i class="fa-solid fa-envelope text-danger me-2"></i>
+                        <span class="fw-bold me-2">Email Us:</span>
+                        <a href="mailto:nestfinder25@gmail.com" class="email-address">NestFinder25@gmail.com</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Custom Styling -->
+        <style>
+            /* Customer Support Card */
+            .support-card {
+                border-radius: 12px;
+                overflow: hidden;
+                transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+                background: #ffffff;
+            }
+
+               
+
+            /* Header Styling */
+            .support-header {
+                background: linear-gradient(135deg, #007bff, #00bcd4);
+                padding: 15px;
+                text-align: center;
+                border-top-left-radius: 12px;
+                border-top-right-radius: 12px;
+            }
+
+            /* Contact Items */
+            .contact-item {
+                padding: 10px;
+                border-radius: 8px;
+                transition: background 0.3s ease-in-out, transform 0.2s;
+            }
+
+                .contact-item:hover {
+                    background: #f8f9fa;
+                    transform: translateX(5px);
+                }
+
+            /* Clickable Links */
+            .phone-number, .email-address {
+                text-decoration: none;
+                color: #007bff;
+                font-weight: 600;
+            }
+
+                .phone-number:hover, .email-address:hover {
+                    text-decoration: underline;
+                    color: #0056b3;
+                }
+        </style>
+
+        <!-- FontAwesome Icons -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+
+        <div class="container mt-5">
+            <h2 class="text-center">Why Choose <span class="text-primary">NestFinder?</span></h2>
+            <div class="row text-center mt-4">
+                <div class="col-md-4">
+                    <i class="fa fa-check-circle text-success fa-3x"></i>
+                    <h5 class="mt-2">100% Verified Listings</h5>
+                    <p>No fake properties, only genuine and trusted listings.</p>
+                </div>
+                <div class="col-md-4">
+                    <i class="fa fa-money-bill-wave text-warning fa-3x"></i>
+                    <h5 class="mt-2">Zero Brokerage</h5>
+                    <p>Save money by dealing directly with property owners.</p>
+                </div>
+                <div class="col-md-4">
+                    <i class="fa fa-headset text-primary fa-3x"></i>
+                    <h5 class="mt-2">24/7 Customer Support</h5>
+                    <p>Our team is available anytime to assist you.</p>
+                </div>
+            </div>
+
+            <div class="row text-center mt-4">
+                <div class="col-md-4">
+                    <i class="fa fa-map-marker-alt text-danger fa-3x"></i>
+                    <h5 class="mt-2">Interactive Search</h5>
+                    <p>Find properties easily with our smart city-based search.</p>
+                </div>
+                <div class="col-md-4">
+                    <i class="fa fa-mobile-alt text-info fa-3x"></i>
+                    <h5 class="mt-2">User-Friendly Interface</h5>
+                    <p>Easy-to-use design for seamless property browsing.</p>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- JavaScript Enhancements -->
+        <script>
+
+
+
+            function redirectTo(suitableFor, gender) {
+                window.location.href = `/Property/FilteredProperties?suitableFor=${suitableFor}&gender=${gender}`;
+            }
+
+
+            // Add hover effects
+            document.querySelectorAll('.hover-effect').forEach(card => {
+                card.addEventListener('mouseover', () => {
+                    card.classList.add('shadow-lg'); // Add larger shadow on hover
+                });
+                card.addEventListener('mouseout', () => {
+                    card.classList.remove('shadow-lg'); // Remove shadow on hover out
+                });
+            });
+
+            // Fade-in animation on load
+            window.addEventListener('load', () => {
+                document.querySelectorAll('.animate-fade-in').forEach(element => {
+                    element.style.opacity = 0;
+                    element.style.transition = 'opacity 1s';
+                    setTimeout(() => {
+                        element.style.opacity = 1;
+                    }, 300);
+                });
+            });
+
+            // Add bounce animation to buttons
+            const bounceButton = document.querySelector('.animate-bounce');
+            bounceButton.addEventListener('mouseover', () => {
+                bounceButton.classList.add('animate');
+                bounceButton.classList.add('animate__bounce');
+            });
+            bounceButton.addEventListener('mouseout', () => {
+                bounceButton.classList.remove('animate');
+                bounceButton.classList.remove('animate__bounce');
+            });
+
+            // Click to copy contact information
+            document.querySelectorAll('.contact-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const text = item.querySelector('.phone-number, .email-address').innerText;
+                    navigator.clipboard.writeText(text).then(() => {
+                        alert(`Copied: ${text}`);
+                    });
+                });
+            });</script>
+
+        <!-- Include Animate.css for bounce effect -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+
+        <br />
+        <br />
+        <br />
+        <br />
+    </body>
+</main>

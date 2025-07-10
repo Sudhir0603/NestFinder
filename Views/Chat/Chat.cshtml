@@ -1,0 +1,51 @@
+﻿@{
+    ViewBag.Title = "Live Chat";
+}
+<h2>Live Chat</h2>
+
+<div>
+    <input type="text" id="username" placeholder="Enter your name" />
+    <button onclick="connect()">Connect</button>
+</div>
+
+<div id="chatBox">
+    <select id="userList"></select>
+    <input type="text" id="message" placeholder="Type a message..." />
+    <button onclick="sendMessage()">Send</button>
+</div>
+
+<ul id="messagesList"></ul>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/3.1.3/signalr.min.js"></script>
+
+<script>
+    var connection = new signalR.HubConnectionBuilder().withUrl("/signalr").build();
+    var currentUser;
+
+    function connect() {
+        currentUser = $("#username").val();
+        connection.start().then(function () {
+            connection.invoke("Connect", currentUser);
+        });
+    }
+
+    function sendMessage() {
+        var receiver = $("#userList").val();
+        var message = $("#message").val();
+
+        connection.invoke("SendMessage", currentUser, receiver, message);
+    }
+
+    connection.on("receiveMessage", function (sender, receiver, message) {
+        $("#messagesList").append(`<li><strong>${sender}:</strong> ${message}</li>`);
+    });
+
+    connection.on("updateUserList", function (users) {
+        $("#userList").empty();
+        users.forEach(user => {
+            $("#userList").append(`<option value="${user}">${user}</option>`);
+        });
+    });
+
+</script>

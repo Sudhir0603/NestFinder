@@ -1,0 +1,185 @@
+﻿@model IEnumerable<NestFinder.Models.Property>
+@using Microsoft.AspNet.Identity;
+
+@{
+    ViewBag.Title = "My Favorite Properties";
+    var userId = User.Identity.GetUserId();
+}
+
+<h2 class="text-center mb-4">My Favorites ❤️</h2>
+
+<!-- ✅ Notification Container (Hidden Initially) -->
+<div id="toast-container"></div>
+
+<div class="container">
+    <div class="row">
+        @if (Model.Any())
+        {
+            foreach (var property in Model)
+            {
+                <div class="col-md-4 mb-4" id="property-card-@property.Id">
+                    <div class="card shadow-lg border-0">
+                        <div id="carousel-@property.Id" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-indicators">
+                                @if (!string.IsNullOrEmpty(property.ImageUrls))
+                                {
+                                    var imageArray = property.ImageUrls.Split(';');
+                                    for (int i = 0; i < imageArray.Length; i++)
+                                    {
+                                        <button type="button" data-bs-target="#carousel-@property.Id" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")"></button>
+                                    }
+                                }
+                            </div>
+                            <div class="carousel-inner">
+                                @if (!string.IsNullOrEmpty(property.ImageUrls))
+                                {
+                                    var imageArray = property.ImageUrls.Split(';');
+                                    for (int i = 0; i < imageArray.Length; i++)
+                                    {
+                                        <div class="carousel-item @(i == 0 ? "active" : "")">
+                                            <img src="@imageArray[i]" class="d-block w-100 rounded-top" alt="Property Image" style="height: 200px; object-fit: cover;">
+                                        </div>
+                                    }
+                                }
+                            </div>
+                        </div>
+
+                        <div class="card-body">
+                            <h5 class="card-title">@property.Title</h5>
+                            <p class="card-text text-muted">@property.Description</p>
+                            <p><strong>Location:</strong> @property.City, @property.State</p>
+                            <p><strong>Price:</strong> ₹@property.Price</p>
+
+                            <div class="d-flex justify-content-between align-items-center">
+                                <a href="@Url.Action("Details", "Property", new { id = property.Id })" class="btn btn-primary btn-sm">View Details</a>
+
+                                <!-- Remove from Favorites Button -->
+                                <button class="favorite-btn"
+                                        id="favorite-btn-@property.Id"
+                                        onclick="removeFavorite(@property.Id)">
+                                    <i class="fa fa-heart favorite-active fa-lg"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="text-center">
+                <p class="text-muted">You have no favorite properties yet.</p>
+                <a href="@Url.Action("Index", "Property")" class="btn btn-primary">Browse Properties</a>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- ✅ JavaScript for Removing Favorites & Notifications -->
+<script>
+    function removeFavorite(propertyId) {
+        var button = document.getElementById("favorite-btn-" + propertyId);
+        var propertyCard = document.getElementById("property-card-" + propertyId);
+
+        fetch('@Url.Action("RemoveFromFavorites", "Property")', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            },
+            body: JSON.stringify({ propertyId: propertyId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showToast("Removed from favorites ❌", "danger");
+
+                // ✅ Fade out and remove the property from the UI
+                propertyCard.style.transition = "opacity 0.5s ease-out";
+                propertyCard.style.opacity = "0";
+
+                setTimeout(() => {
+                    propertyCard.remove();
+
+                    // ✅ If no more favorites, show empty message
+                    if (document.querySelectorAll('.col-md-4').length === 0) {
+                        document.querySelector('.container .row').innerHTML =
+                            `<div class="text-center">
+                                <p class="text-muted">You have no favorite properties yet.</p>
+                                <a href="@Url.Action("Index", "Property")" class="btn btn-primary">Browse Properties</a>
+                            </div>`;
+                    }
+                }, 500);
+            } else {
+                showToast("⚠ Error: " + data.message, "warning");
+            }
+        })
+        .catch(error => console.error("❌ AJAX Error:", error));
+    }
+
+    // ✅ Function to Show Toast Notification
+    function showToast(message, type) {
+        var toast = document.createElement("div");
+        toast.className = "toast-message toast-" + type;
+        toast.innerText = message;
+        document.getElementById("toast-container").appendChild(toast);
+
+        setTimeout(() => {
+            toast.classList.add("fade-out");
+            setTimeout(() => toast.remove(), 500);
+        }, 3000);
+    }
+</script>
+
+<!-- ✅ Styling for Smooth UI & Animations -->
+<style>
+    #toast-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+    }
+
+    .toast-message {
+        background: #fff;
+        color: #333;
+        padding: 12px 20px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        font-weight: bold;
+        display: inline-block;
+        min-width: 250px;
+        text-align: center;
+        animation: slide-in 0.5s ease-out;
+    }
+
+    .toast-success { border-left: 6px solid #28a745; }
+    .toast-danger { border-left: 6px solid #dc3545; }
+    .toast-warning { border-left: 6px solid #ffc107; }
+
+    .fade-out {
+        animation: fadeOut 0.5s forwards;
+    }
+
+   
+
+    .favorite-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        outline: none;
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .favorite-btn:hover {
+        transform: scale(1.1);
+    }
+
+    .favorite-active {
+        color: red;
+    }
+</style>
+
+<!-- ✅ Font Awesome for Heart Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">

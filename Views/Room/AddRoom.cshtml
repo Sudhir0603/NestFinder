@@ -1,0 +1,93 @@
+﻿@model List<NestFinder.Models.Room>
+
+@{
+    ViewBag.Title = "Add Room";
+}
+
+<h2>Add Rooms</h2>
+
+<form method="post">
+    @Html.AntiForgeryToken() <!-- Security Token -->
+    <input type="hidden" name="PropertyId" value="@ViewBag.PropertyId" />
+
+    <div id="roomsContainer">
+        <!-- Initial Room Input -->
+        <div class="card mt-3 room-entry">
+            <div class="card-body">
+                <h5 class="card-title">Room 1</h5>
+                <button type="button" class="btn btn-danger btn-sm float-end" onclick="removeRoom(this)">Delete</button>
+
+                <input type="hidden" name="Rooms[0].PropertyId" value="@ViewBag.PropertyId" />
+
+                <div class="mb-3">
+                    <label class="form-label">Room Type</label>
+                    <select name="Rooms[0].RoomType" class="form-control" required>
+                        <option value="Private Room">Private Room</option>
+                        <option value="Double Sharing">Double Sharing</option>
+                        <option value="Triple Sharing">Triple Sharing</option>
+                        <option value="3+ Sharing">3+ Sharing</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Rent</label>
+                    <input type="number" name="Rooms[0].Rent" class="form-control" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Security Deposit</label>
+                    <input type="number" name="Rooms[0].SecurityDeposit" class="form-control">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button type="button" id="addRoomBtn" class="btn btn-success mt-2">+ Add Another Room</button>
+
+    <button type="submit" class="btn btn-primary mt-3">Save Rooms</button>
+    @*<a href="@Url.Action("Index", "Property")" class="btn btn-secondary mt-3">Skip</a>*@
+</form>
+
+<script>
+    let roomCount = 1;
+
+    document.getElementById("addRoomBtn").addEventListener("click", function () {
+        const roomHtml = `
+            <div class="card mt-3 room-entry">
+                <div class="card-body">
+                    <h5 class="card-title">Room ${roomCount + 1}</h5>
+                    <button type="button" class="btn btn-danger btn-sm float-end" onclick="removeRoom(this)">Delete</button>
+
+                    <input type="hidden" name="Rooms[${roomCount}].PropertyId" value="@ViewBag.PropertyId" />
+
+                    <div class="mb-3">
+                        <label class="form-label">Room Type</label>
+                        <select name="Rooms[${roomCount}].RoomType" class="form-control" required>
+                            <option value="Private Room">Private Room</option>
+                            <option value="Double Sharing">Double Sharing</option>
+                            <option value="Triple Sharing">Triple Sharing</option>
+                            <option value="3+ Sharing">3+ Sharing</option>
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Rent</label>
+                        <input type="number" name="Rooms[${roomCount}].Rent" class="form-control" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Security Deposit</label>
+                        <input type="number" name="Rooms[${roomCount}].SecurityDeposit" class="form-control">
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.getElementById("roomsContainer").insertAdjacentHTML("beforeend", roomHtml);
+        roomCount++;
+    });
+
+    function removeRoom(button) {
+        button.closest(".room-entry").remove();
+    }
+</script>

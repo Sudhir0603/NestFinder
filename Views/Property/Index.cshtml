@@ -1,0 +1,267 @@
+﻿@model IEnumerable<NestFinder.Models.Property>
+@using Microsoft.AspNet.Identity;
+
+@{
+    ViewBag.Title = "All Properties";
+    var userId = User.Identity.GetUserId();
+}
+
+<h2 class="text-center mb-4">Available Properties</h2>
+
+<!-- ✅ Notification Container (Hidden Initially) -->
+<div id="toast-container"></div>
+
+<div class="container">
+    <div class="container mt-3">
+        <div class="d-flex justify-content-center">
+            <div class="search-container" onclick="redirectToSearch()">
+                <input type="text" class="form-control search-input" placeholder="🏡 Search...  " readonly>
+                <button class="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+    <br />
+
+    <script>
+function redirectToSearch() {
+    window.location.href = '@Url.Action("Search", "Property")';
+}
+    </script>
+    <style>
+        .search-container {
+            position: relative;
+            width: 50%;
+            max-width: 450px;
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out;
+        }
+
+
+
+        .search-input {
+            width: 100%;
+            padding: 14px 50px 14px 20px;
+            border-radius: 30px;
+            border: 2px solid #007bff;
+            outline: none;
+            font-size: 16px;
+            background: #f8f9fa;
+            transition: all 0.3s ease-in-out;
+            cursor: pointer;
+        }
+
+            .search-input:focus {
+                border-color: #0056b3;
+                box-shadow: 0px 0px 12px rgba(0, 123, 255, 0.7);
+            }
+
+        .search-btn {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: linear-gradient(45deg, #007bff, #00d4ff);
+            color: white;
+            border: none;
+            padding: 12px 15px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease-in-out;
+            box-shadow: 0px 0px 8px rgba(0, 123, 255, 0.5);
+        }
+
+            .search-btn:hover {
+                background: linear-gradient(45deg, #0056b3, #0099cc);
+                box-shadow: 0px 0px 12px rgba(0, 86, 179, 0.8);
+            }
+
+            .search-btn i {
+                font-size: 18px;
+            }
+    </style>
+    <div class="row">
+
+
+        @foreach (var property in Model)
+        {
+            bool isFavorite = ViewBag.FavoritePropertyIds != null && ViewBag.FavoritePropertyIds.Contains(property.Id);
+
+            <div class="col-md-4 mb-4">
+                <div class="card shadow-lg border-0">
+                    <div id="carousel-@property.Id" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-indicators">
+                            @if (!string.IsNullOrEmpty(property.ImageUrls))
+                            {
+                                var imageArray = property.ImageUrls.Split(';');
+                                for (int i = 0; i < imageArray.Length; i++)
+                                {
+                                    <button type="button" data-bs-target="#carousel-@property.Id" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")"></button>
+                                }
+                            }
+                        </div>
+                        <div class="carousel-inner">
+                            @if (!string.IsNullOrEmpty(property.ImageUrls))
+                            {
+                                var imageArray = property.ImageUrls.Split(';');
+                                for (int i = 0; i < imageArray.Length; i++)
+                                {
+                                    <div class="carousel-item @(i == 0 ? "active" : "")">
+                                        <img src="@imageArray[i]" class="d-block w-100 rounded-top" alt="Property Image" style="height: 200px; object-fit: cover;">
+                                    </div>
+                                }
+                            }
+                        </div>
+                    </div>
+                    <!-- Badges for Gender & Suitable For (Top-Left Corner, Smaller Size) -->
+                    <div class="position-absolute top-0 start-0 m-2">
+                        <span class="badge small-badge
+            @(property.Gender == "Boys" ? "bg-primary" :
+              property.Gender == "Girls" ? "bg-danger" :
+              "bg-warning text-dark")">
+                            @(property.Gender)
+                        </span>
+
+                        <span class="badge small-badge
+            @(property.SuitableFor == "Students" ? "bg-success" :
+              property.SuitableFor == "Working Professionals" ? "bg-info text-dark" :
+              "bg-secondary")">
+                            @(property.SuitableFor)
+                        </span>
+                    </div>
+
+                    <div class="card-body">
+                        <h5 class="card-title">@property.Title</h5>
+                        <p class="card-text text-muted">@property.Description</p>
+                        <p><strong>Location:</strong> @property.City, @property.State</p>
+                        <p><strong>Price:</strong> ₹@property.Price</p>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="@Url.Action("Details", "Property", new { id = property.Id })" class="btn btn-primary btn-sm">View Details</a>
+
+                            <!-- Favorite Button with Heart Icon -->
+                            <button class="favorite-btn"
+                                    id="favorite-btn-@property.Id"
+                                    onclick="toggleFavorite(@property.Id)">
+                                <i class="fa @(isFavorite ? "fa-heart favorite-active" : "fa-heart favorite-inactive") fa-lg"></i>
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        }
+
+    </div>
+</div>
+
+<!-- ✅ JavaScript for Favorite Toggle & Notifications -->
+<script>
+    function toggleFavorite(propertyId) {
+        var button = document.getElementById("favorite-btn-" + propertyId);
+        var icon = button.querySelector("i");
+        var isFavorite = icon.classList.contains("favorite-active");
+
+        fetch(isFavorite ? '@Url.Action("RemoveFromFavorites", "Property")' : '@Url.Action("AddToFavorites", "Property")', {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-Requested-With": "XMLHttpRequest"
+            },
+            body: JSON.stringify({ propertyId: propertyId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                icon.classList.toggle("favorite-active");
+                icon.classList.toggle("favorite-inactive");
+                showToast(isFavorite ? "Removed from favorites ❌" : "Added to favorites ✅", isFavorite ? "danger" : "success");
+            } else {
+                showToast("⚠  " + data.message, "warning");
+            }
+        })
+        .catch(error => console.error("❌ AJAX Error:", error));
+    }
+
+    // ✅ Function to Show Toast Notification
+    function showToast(message, type) {
+        var toast = document.createElement("div");
+        toast.className = "toast-message toast-" + type;
+        toast.innerText = message;
+        document.getElementById("toast-container").appendChild(toast);
+
+        setTimeout(() => {
+            toast.classList.add("fade-out");
+            setTimeout(() => toast.remove(), 500);
+        }, 3000);
+    }
+</script>
+
+<!-- ✅ Toast Notification Styling -->
+<style>
+    #toast-container {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 9999;
+    }
+
+    .toast-message {
+        background: #fff;
+        color: #333;
+        padding: 12px 20px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        font-weight: bold;
+        display: inline-block;
+        min-width: 250px;
+        text-align: center;
+        animation: slide-in 0.5s ease-out;
+    }
+
+    .toast-success { border-left: 6px solid #28a745; } /* Green for success */
+    .toast-danger { border-left: 6px solid #dc3545; } /* Red for removed */
+    .toast-warning { border-left: 6px solid #ffc107; } /* Yellow for errors */
+
+    .fade-out {
+        animation: fadeOut 0.5s forwards;
+    }
+
+ .small-badge {
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 8px;
+    opacity: 0.9;
+}
+
+
+    .favorite-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        outline: none;
+        transition: transform 0.2s ease-in-out;
+    }
+
+    .favorite-btn:hover {
+        transform: scale(1.1);
+    }
+
+    .favorite-active {
+        color: red;
+    }
+
+    .favorite-inactive {
+        color: #555;
+    }
+
+    .favorite-inactive:hover {
+        color: #ff4d4d;
+    }
+</style>
+
+<!-- ✅ Font Awesome for Heart Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
