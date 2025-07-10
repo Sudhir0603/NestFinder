@@ -1,7 +1,12 @@
-# 🏠 NestFinder - ASP.NET MVC PG/Hostel Finder Web Application
- A web-based PG/Hostel listing platform built with ASP.NET MVC and Entity Framework. Users can post, search, and filter properties. Admins verify listings, manage users, and reply to queries. Features include login, favorites, chat, ratings, and email integration.
+### 🏠 NestFind Overview
+🔷 NestFinder - ASP.NET MVC PG/Hostel Finder Web Application
+NestFinder is a web-based platform developed using ASP.NET MVC and Entity Framework, designed to help users find and post Paying Guest (PG) or Hostel accommodations with ease. It acts as a bridge between people looking for a place to stay and those who have accommodations to offer.
 
+The platform supports two user roles:
 
+General Users who can register, browse, post, and interact.
+
+Admins who verify properties, manage users, and handle reported content.
 
 ---
 
