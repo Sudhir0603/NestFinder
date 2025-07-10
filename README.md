@@ -7,7 +7,7 @@
 
 ## 📸 Demo Screenshot
 
-![NestFinder Dashboard](assets/Dashboard.png)
+<img src="assets/Dashboard.png" width="400" alt="NestFinder Dashboard"/>
 
 ---
 
@@ -94,12 +94,18 @@ App_Start/Startup.cs
 
 
 ## 🗃️ Database Design (Key Tables)
- AspNetUsers – User credentials + profile info
+AspNetUsers – User credentials + profile info 
+
 Properties – PG property data
+
 Rooms – Rooms under each property
+
 Comments – User comments per property
+
 Ratings – Ratings per property
+
 Chats – Messages between users
+
 ContactQueries – Contact form submissions
 
 
@@ -107,153 +113,78 @@ ContactQueries – Contact form submissions
 ### 📂 Project Structure
 
 Models/ – Entity classes
+
 Controllers/ – Logic for each module (PropertyController, AdminController, RoomController, etc.)
+
 Views/ – Razor Pages for all features
+
 App_Start/ – Startup configuration (Startup.cs)
+
 Content/ – CSS, images, and static assets
+
 Scripts/ – jQuery, AJAX, Bootstrap JS
+
 
 
 ### ❗ Challenges Faced
 
 Role-based access control with ASP.NET Identity
+
 Secure password and email handling
+
 Cascade deletion to maintain database integrity
+
 Managing file/image uploads for properties
+
 Complex filter combinations in property search
+
 
 ### 🔭 Future Scope
 🌍 Google Maps integration to display property location
+
 💬 Real-time chat using SignalR
+
 📅 PG booking and visit scheduling system
+
 💳 Payment Gateway for deposit/booking
+
 📱 Cross-platform mobile app using .NET MAUI
 
----
 
-## 📸 Project Screenshots
+### 🖼️ Project Screenshots
 
-All screenshots are stored in the `/assets` folder and arranged below by feature.
+### 🔐 Login & Registration
+<img src="assets/Picture1.png" width="400"/> <img src="assets/Picture2.png" width="400"/>
 
----
+### 👤 Profile View & Edit
+<img src="assets/Picture3.png" width="400"/> <img src="assets/Picture4.png" width="400"/>
 
-### 🔐 1. Login & Registration Screens
-- **Login Screen**
-  
-  ![Login Screen](assets/Picture1.png)
+### 📊 Dashboard, Property Post & Add Rooms
+<img src="assets/Picture5.png" width="700"/>
+### 🏡 Property Details View
+<img src="assets/Picture6.png" width="700"/>
+### 📝 My Uploaded Properties
+<img src="assets/Picture7.png" width="700"/>
+### 🛠️ Edit Property
+<img src="assets/Picture8.png" width="700"/>
+### ❤️ Property List & Favorites
+<img src="assets/Picture9.png" width="400"/> <img src="assets/Picture10.png" width="400"/>
 
-- **User Registration**
+### 🔍 Property Search with Filters
+<img src="assets/Picture11.png" width="700"/>
+### 🧑‍💼 Admin Panel, Reports & User Control
+<img src="assets/Picture14.png" width="400"/> <img src="assets/Picture15.png" width="400"/>
 
-  ![Registration Screen](assets/Picture2.png)
+### 📬 Contact Form & Admin Queries
+<img src="assets/Picture16.png" width="400"/> <img src="assets/Picture17.png" width="400"/>
 
----
-
-### 👤 2. Profile View & Edit
-- **View Profile**
-  
-  ![Profile View](assets/Picture3.png)
-
-- **Edit Profile**
-  
-  ![Edit Profile](assets/Picture4.png)
-
----
-
-### 📊 3. Dashboard, Post Property & Add Rooms
-- **User Dashboard + Property Posting**
-
-  ![User Dashboard](assets/Picture5.png)
-
----
-
-### 🏡 4. Property Details View
-
-- **Property Details**
-
-  ![Property Details](assets/Picture6.png)
-
----
-
-### 📝 5. My Uploaded Properties
-
-- **My Properties Page**
-
-  ![My Uploaded Properties](assets/Picture7.png)
-
----
-
-### 🛠️ 6. Edit Property
-
-- **Edit Property Form**
-
-  ![Edit Property](assets/Picture8.png)
-
----
-
-### ❤️ 7. Property List & Favorites
-
-- **Available Properties + Add to Favorites**
-
-  ![Available Properties](assets/Picture9.png)
-
-- **Favorites List + Remove from Favorites**
-
-  ![Favorites Page](assets/Picture10.png)
-
----
-
-### 🔍 8. Property Search
-
-- **Search with Filters**
-
-  ![Search Filters](assets/Picture11.png)
-
----
-
-### 🧑‍💼 9. Admin Panel, Reports & Management
-
-- **Admin Dashboard**
-
-  ![Admin Dashboard](assets/Picture14.png)
-
-- **Admin Reports, Total Users, Manage Users, Pending Approvals**
-
-  ![Admin Reports](assets/Picture15.png)
-
----
-
-### 📬 10. Contact Form & Queries (Admin View)
-
-- **User Contact Form**
-
-  ![Contact Us](assets/Picture16.png)
-
-- **Admin - View User Queries**
-
-  ![View Queries](assets/Picture17.png)
-
----
-
-### 📈 11. User Management (Admin)
-
-- **Total Users, Manage Users, Pending Property Approvals**
-
-  ![Manage Users](assets/Picture18.png)
-
----
-
-### 🔒 12. Privacy Policy Page
-
-- **Privacy Policy**
-
-  ![Privacy Policy](assets/Picture21.png)
-
----
-
-
-
-
+### 📈 User Management (Admin)
+<img src="assets/Picture18.png" width="700"/>
+### 🔒 Privacy Policy Page
+<img src="assets/Picture21.png" width="700"/>
 
 ### 👨‍💻 Developer Info
 Created by: Sudhir Ashok Kamble
 📧 Email: sudhir.kamble0603@gmail.com
+
+🌟 If you found this project useful or interesting, don't forget to ⭐ the repo!
